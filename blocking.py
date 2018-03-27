@@ -38,18 +38,10 @@ def block(x):
     return ans
 
 # input data must be a power of two
-eq = 0.9
-
 
 x = loadtxt(argv[1])
-
-
-
-#x = x[int((1-eq)*len(x)):len(x)]
-print len(x)
+#Equalibrate data to use the last 2**19 data points
 x = x[len(x)-2**19:len(x)]
-
-print len(x)
 ans = block(x)
 
 
