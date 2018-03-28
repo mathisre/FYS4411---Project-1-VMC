@@ -5,6 +5,6 @@ class RandomUniform : public InitialState {
 public:
     RandomUniform(System* system, int numberOfDimensions, int numberOfParticles, double interactionSize, double timeStep, int bins, double bucketSize);
     void setupInitialState();
-    void setupInitialStateWithInteraction();
+  //  void setupInitialStateWithInteraction();
 };
 

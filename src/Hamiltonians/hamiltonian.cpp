@@ -12,6 +12,7 @@ Hamiltonian::Hamiltonian(System* system) {
 }
 
 double Hamiltonian::computeNumericalDoubleDerivative (std::vector<Particle> &particles){
+//Function to compute the numerical double derivative of the wavefunction
 
     double h=0.001;
     double h_squared=h*h;
@@ -49,53 +50,3 @@ double Hamiltonian::computeNumericalDoubleDerivative (std::vector<Particle> &par
 //cout<<wf/present<<endl;
  return wf/(present);
 }
-
-double Hamiltonian::computeNumericalDoubleDerivativeSingleParticle(std::vector<class Particle>& particles, int singParticle){
-    double h=0.001;
-    double h_squared=h*h;
-    double wf=0;
-
-    double backward=0;
-    double forward =0;
-    double present=0;
-
-
-    std::vector <double> r(m_system->getNumberOfDimensions());
-
-
-    present =m_system->getWaveFunction()->evaluate(particles);
-
-    for(int d=0; d<m_system->getNumberOfDimensions(); d++){
-        r[d]=particles.at(singParticle).getPosition()[d];
-    }
-
-        for(int d=0; d < m_system->getNumberOfDimensions(); d++){
-
-
-            // r[d]=particles.at(singParticle).getPosition()[d];
-
-
-
-             r[d]-=h;
-             particles.at(singParticle).setPosition(r);
-
-             backward += m_system->getWaveFunction()->evaluate(particles);
-
-             r[d]+=2*h;
-             particles.at(singParticle).setPosition(r);
-             forward += m_system->getWaveFunction()->evaluate(particles);
-
-             r[d]-=h;
-
-             particles.at(singParticle).setPosition(r);
-
-
-         }
-
-
-    wf=(backward+forward-2*present*m_system->getNumberOfDimensions())/(h_squared);
- //  cout<<wf/present<<endl;
-    return wf/present;
-}
-
-

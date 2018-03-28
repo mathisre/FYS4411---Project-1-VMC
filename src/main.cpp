@@ -15,34 +15,27 @@
 
 using namespace std;
 
-int main(int argc, char* argv[]){
+int main(){
 
-//    if (argc < 3){
-//        cout << "Put dimensions and particles in cmd line" << endl;
-//        exit(EXIT_FAILURE);
-//    }
-//    int numberOfParticles   = atoi(argv[2]);
-//    int numberOfDimensions  = atoi(argv[1]);
-
-    int numberOfParticles   = 10;
-    int numberOfDimensions  = 3;
-    double alpha            = 0.40;      // Variational parameter.
-    double beta             = 1;            // beta 2.82843
-    int numberOfSteps       = (int) 1e+5;
-    double interactionSize  = 0;            // 0.00043
+    int numberOfParticles   = 10;        //Number of particles of the system considered
+    int numberOfDimensions  = 3;         // NUmber of dimensions
+    double alpha            = 0.50;      // Variational parameter.
+    double beta             = 1.0;            // for interacting case: beta=2.82843
+    int numberOfSteps       = (int) 1e+6;   // NUmber of Monte Carlo steps
+    double interactionSize  = 0.0; // for interacting case: interactionSize=0.0043;
 
     double timeStep         = 0.01;        // Importance sampling time step
     double stepLength       = 1.0;          // Metropolis step length.
     double omega            = 1.0;          // Oscillator frequency.
-    double omega_z = beta;
-    double equilibration    = 0.7;          // Amount of the total steps used for equilibration.
+    double omega_z = beta;                  // Oscillator frequency in z-direction
+    double equilibration    = 0.2;          // Amount of the total steps used for equilibration.
 
     // Parameters for onebody density histogram
     double bucketSize = 0.01;
     int bins = ceil(4 / bucketSize);
 
 //    string filename = "0";
-    string filename         = "alpha_" + to_string(alpha) + "_dim_" + to_string(numberOfDimensions) + "_particles_" + to_string(numberOfParticles)  + ".dat";
+    string filename         = "Alpha_" + to_string(alpha) + "_dim_" + to_string(numberOfDimensions) + "_particles_" + to_string(numberOfParticles)  + ".dat";
     // Set filename to "0" to stop from writing to file
 
     System* system = new System();
@@ -77,6 +70,7 @@ int main(int argc, char* argv[]){
     string densityFilename = "density_alpha_" + to_string(alpha) + "_beta_" + to_string(beta) + "_inter.dat";
 //    system->printOneBodyDensity(densityFilename);
 
+    //time
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> diff = end-start;
     std::cout << " Computation time = " << diff.count() << " s\n" << endl; //display run time

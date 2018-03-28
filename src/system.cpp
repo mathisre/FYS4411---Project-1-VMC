@@ -15,12 +15,13 @@
 
 using namespace std;
 
-bool System::metropolisStepBruteForce() {
+bool System::metropolisStepBruteForce() { //Brute Force Metropolis method
     int randparticle=Random::nextInt(m_numberOfParticles);
 
     vector <double> r_old=m_particles.at(randparticle).getPosition();
     vector <double> r_new(m_numberOfDimensions);
 
+//choose a new move
    for(int d = 0; d < m_numberOfDimensions; d++){
         r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
 //        cout << "R_old = " << r_old[d] << endl;
@@ -31,13 +32,15 @@ bool System::metropolisStepBruteForce() {
     updateDistanceMatrix(m_particles, randparticle);
 
     double psi_new = m_waveFunction->evaluate(m_particles);
-    if (Random::nextDouble() <= psi_new * psi_new / (m_psiOld * m_psiOld)){ // Accept
+
+
+    if (Random::nextDouble() <= psi_new * psi_new / (m_psiOld * m_psiOld)){ // Accept the new move
         m_psiOld = psi_new;
 
         getSampler()->setEnergy(getHamiltonian()->computeLocalEnergy(getParticles()));
         return true;
     }
-    else{ // Don't accept
+    else{ // Don't accept accept the new move
         m_particles.at(randparticle).setPosition(r_old);
         updateDistanceMatrix(m_particles, randparticle);
         return false;
@@ -45,8 +48,7 @@ bool System::metropolisStepBruteForce() {
 }
 
 
-
-bool System::metropolisStepImportance() {
+bool System::metropolisStepImportance() { //Importance Sampling method
     int randparticle=Random::nextInt(m_numberOfParticles);
     vector <double> r_old=m_particles.at(randparticle).getPosition();
     vector <double> r_new(m_numberOfDimensions);
@@ -55,6 +57,7 @@ bool System::metropolisStepImportance() {
     vector <vector<double>> QF_new(m_numberOfDimensions,vector<double>(m_numberOfParticles));
     QF_old=m_QuantumForce;
 
+//Choose a new move
    for(int d = 0; d < m_numberOfDimensions; d++){
         r_new[d] = r_old[d] + 0.5*m_QuantumForce[d][randparticle]*m_timeStep + m_sqrtTimeStep*(Random::nextGaussian(0, 1));
 //        cout << r_new[d] - r_old[d] << endl;
@@ -67,6 +70,7 @@ bool System::metropolisStepImportance() {
     QF_new = m_QuantumForce;
     updateDistanceMatrix(m_particles, randparticle);
 
+// Compute Green function
     double GreensFunction =0.0;
     for(int d = 0; d < m_numberOfDimensions; d++){
         int j = randparticle;
@@ -77,14 +81,14 @@ bool System::metropolisStepImportance() {
     GreensFunction = exp(GreensFunction);
     double psi_new = m_waveFunction->evaluate(m_particles);
 
-    // Accept
+    // Accept  new move
     if (Random::nextDouble() <= GreensFunction*psi_new * psi_new / (m_psiOld * m_psiOld)){
         m_psiOld = psi_new;
         getSampler()->setEnergy(getHamiltonian()->computeLocalEnergy(getParticles()));
         return true;
     }
 
-    // Don't accept
+    // Don't accept new move
     else{
         m_particles.at(randparticle).setPosition(r_old);
         setQuantumForce(QF_old);
@@ -94,6 +98,7 @@ bool System::metropolisStepImportance() {
 }
 
 void System::runMetropolisSteps(int numberOfMetropolisSteps) {
+    //Principal function of the whole code. Here the Monte Carlo method is
     m_particles                 = m_initialState->getParticles();
     m_sampler                   = new Sampler(this);
     m_numberOfMetropolisSteps   = numberOfMetropolisSteps;
@@ -111,18 +116,17 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     setHistogram();
 
     for (int i=0; i < numberOfMetropolisSteps; i++) {
-        bool acceptedStep = metropolisStepBruteForce();
-//        bool acceptedStep = metropolisStepImportance();
+//        bool acceptedStep = metropolisStepBruteForce();   //run the system with Brute Force Metropolis
+        bool acceptedStep = metropolisStepImportance();     //run the system with Importance Sampling
 
-        m_sampler->sample(acceptedStep);
+        m_sampler->sample(acceptedStep);                    //sample results and write them to file
         m_sampler->writeToFile();
     }
 }
 
 
-
-
 void System::oneBodyDensity(){
+    //Function to made the histrograms needed to compute the one body density
     vector<int> histogram(m_bins);
     double r2 = 0;
     for (int j = 0; j < getNumberOfParticles(); j++){
@@ -156,7 +160,7 @@ void System::setHistogram()
 }
 
 double System::gradientDescent(double initialAlpha, string filename, int maxIterations){
-
+//Gradient descent method to find the optimal variational parameter alpha given an initial parameter initialAlpha
     int steepestDescentSteps = (int) 1e+5;
     double alpha = initialAlpha;
     double beta = getWaveFunction()->getParameters()[2] / getWaveFunction()->getParameters()[0];
@@ -191,7 +195,7 @@ double System::gradientDescent(double initialAlpha, string filename, int maxIter
 
         // Write alpha, mean local energy and st dev to file
         myFile << alpha << "   "  << getSampler()->getEnergy() << "  " <<
-                  sqrt(getSampler()->getCumulativeEnergySquared() - getSampler()->getEnergy()*getSampler()->getEnergy()) << endl;
+                  sqrt(getSampler()->getCumulativeEnergySquared() - getSampler()->getEnergy()*getSampler()->getEnergy())/getNumberOfMetropolisSteps() << endl;
 
         if ((double) iterations / maxIterations > 1-percentAlphasToSave){
             cumulativeAlpha += alpha;

@@ -23,7 +23,7 @@ void Sampler::setNumberOfMetropolisSteps(int steps) {
 }
 
 void Sampler::sample(bool acceptedStep) {
-
+//Function to sample the data
     if (m_stepNumber == 0) {
         m_cumulativeEnergy          = 0;
         m_cumulativeEnergySquared   = 0;
@@ -48,7 +48,7 @@ void Sampler::sample(bool acceptedStep) {
 
     //cout<<m_energy<<endl;
      if (((double)getStepNumber()/getNumberOfMetropolisSteps() > 1.0 - m_system->getEquilibrationFraction())||fabs((double)getStepNumber()/getNumberOfMetropolisSteps() -( 1.0 - m_system->getEquilibrationFraction()))<1e-10){
-
+//sample if the system is at equilibrium
         m_cumulativeEnergy          += m_energy;
         m_cumulativeEnergySquared   += m_energy*m_energy;
         m_cumulativeWFderiv         += m_WFderiv;
@@ -86,14 +86,13 @@ void Sampler::printOutputToTerminal() {
     cout << "  -- Results -- " << endl;
     cout << " Energy : " << m_energy << endl;
     cout << " St. dev: " << sqrt(m_cumulativeEnergySquared - m_energy*m_energy) / sqrt(ms) << endl;
-    cout << " Number of accepted steps: " << m_acceptedNumber/m_stepNumber << endl;
+    cout << " Acceptance ratio: " << m_acceptedNumber/m_stepNumber << endl;
     cout << endl;
 }
 
 
 
 void Sampler::computeAverages() {
-
 
     m_energy = m_cumulativeEnergy / (m_system->getNumberOfMetropolisSteps()*m_system->getEquilibrationFraction());
     m_cumulativeEnergySquared /= m_system->getNumberOfMetropolisSteps()*m_system->getEquilibrationFraction();
@@ -110,6 +109,7 @@ void Sampler::writeToFile(){
     if (ofile.is_open()) ofile << m_energy << endl;
 }
 
+//getters and setters
 int Sampler::getStepNumber() const
 {
     return m_stepNumber;

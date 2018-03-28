@@ -6,8 +6,6 @@ class HarmonicOscillator : public Hamiltonian {
 public:
     HarmonicOscillator(System* system, double omega, double omega_z);
     double computeLocalEnergy(std::vector<Particle>& particles);
-    double LocalEnergySingleParticle(std::vector<Particle>& particles, int singParticle);
-
 
     std::vector<double> omega() const;
     void setOmega(const std::vector<double> &omega);

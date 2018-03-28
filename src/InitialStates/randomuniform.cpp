@@ -42,7 +42,7 @@ void RandomUniform::setupInitialState() {
         m_particles.at(i).setPosition(position);
     }
 }
-
+/*
 void RandomUniform::setupInitialStateWithInteraction() {
     int placedParticles = 0;
     double R_ki = 0;
@@ -73,3 +73,4 @@ void RandomUniform::setupInitialStateWithInteraction() {
     }
     m_system->setDistanceMatrix(distancematrix);
 }
+*/
