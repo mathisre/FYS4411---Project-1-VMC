@@ -11,3 +11,4 @@ In folder "Figures", there are all the plots made for the report.
 
 In folder "Some_results", there are some results which we find important i.e. the ground state energy computed with the optimal parameters alpha found through gradient descent for 10,50,100 particles in 3D.
 
+The program blocking.py runs taking the textfile as command line argument. 
