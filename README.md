@@ -9,6 +9,6 @@ Moreover, inside src (folder "blocking") there is a python code to perform the b
 
 In folder "Figures", there are all the plots made for the report.
 
-In folder "Some_results", there are some results which we find important i.e. the ground state energy computed with the optimal parameters alpha found through gradient descent for 10,50,100 particles in 3D.
+In folder "Data", there are some results which we find important i.e. the ground state energy computed with the optimal parameters alpha found through gradient descent for 10,50,100 particles in 3D and examples about the computation of the one-body densities.
 
 The program blocking.py runs taking the textfile as command line argument. 
